@@ -1,1 +1,4 @@
 .terraform
+berks-cookbooks/
+Berksfile.lock
+app
