@@ -16,33 +16,64 @@ provider "aws" {
 # create new subnet
 # move our instance into said subnet
 resource "aws_subnet" "app_subnet_elliot" {
-  vpc_id = "vpc-07e47e9d90d2076da"
-  cidr_block = "172.31.44.0/24"
+  vpc_id            = var.vpc_id
+  cidr_block        = "172.31.44.0/24"
   availability_zone = "eu-west-1a"
   tags = {
-    Name = "elliot-eng54-sunet-public"
+    Name = "${var.name}subnet-public"
   }
 }
+
+# Route Table
+resource "aws_route_table" "public" {
+  vpc_id          = var.vpc_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = data.aws_internet_gateway.default_gw.id
+  }
+
+  tags = {
+    Name = "${var.name}public"
+  }
+}
+
+resource "aws_route_table_association" "assoc" {
+  subnet_id       = aws_subnet.app_subnet_elliot.id
+  route_table_id  = aws_route_table.public.id
+}
+
+
+# we dont need a new internet gateway, we can query our existing vpc/Infrastructure with 'data' handler
+data "aws_internet_gateway" "default_gw" {
+  filter{
+    # on the hashicorp docs it reference AWS-API that has this filter "attachment.vpc-id"
+    name    = "attachment.vpc-id"
+    values  = [var.vpc_id]
+  }
+}
+
 
 
 
 # Launching a resource
-
 resource "aws_instance" "app_instance" {
-  ami = "ami-040bb941f8d94b312"
-  instance_type = "t2.micro"
-  associate_public_ip_address = true
-  subnet_id = "${aws_subnet.app_subnet_elliot.id}"
-  vpc_security_group_ids = [aws_security_group.elliot_eng54_terraform.id]
+  ami                           = var.ami_id
+  instance_type                 = "t2.micro"
+  associate_public_ip_address   = true
+  subnet_id                     = "${aws_subnet.app_subnet_elliot.id}"
+  vpc_security_group_ids        = [aws_security_group.elliot_eng54_terraform.id]
   tags = {
-    Name = "elliot-eng54-app"
+    Name = "${var.name}terraform-app"
   }
+  key_name                      = "elliot-eng54"
 }
 
+# adding a security group
 resource "aws_security_group" "elliot_eng54_terraform" {
-  name        = "elliot-eng54-terraform"
-  description = "Allow TLS inbound traffic"
-  vpc_id      = "vpc-07e47e9d90d2076da"
+  name          = "${var.name}terraform"
+  description   = "Allow TLS inbound traffic"
+  vpc_id        = var.vpc_id
 
   ingress {
     description = "Allows access on port 80"
@@ -50,6 +81,38 @@ resource "aws_security_group" "elliot_eng54_terraform" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allows access on port 8080"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allows access on port 443"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allows access on port 3000"
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allows access on my IP port 22"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["86.174.120.138/32"]
   }
 
   egress {
@@ -60,7 +123,7 @@ resource "aws_security_group" "elliot_eng54_terraform" {
   }
 
   tags = {
-    Name = "elliot-eng54-app-security"
+    Name = "${var.name}app-security"
   }
 }
 
