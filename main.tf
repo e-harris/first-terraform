@@ -67,14 +67,22 @@ resource "aws_instance" "app_instance" {
     Name = "${var.name}terraform-app"
   }
   key_name                      = "elliot-eng54"
-#   provisioner "remote-exec" {
-#     inline = [
-#       "cd app",
-#       "npm install",
-#       "npm start"
-#     ]
-#   }
-# }
+
+
+  provisioner "remote-exec" {
+    inline  = [
+      "cd app",
+      "npm install",
+      "npm start"
+    ]
+  }
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("~/.ssh/elliot-eng54.pem")
+    host        = self.public_ip
+  }
+}
 
 # adding a security group
 resource "aws_security_group" "elliot_eng54_terraform" {
