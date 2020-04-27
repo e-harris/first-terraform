@@ -10,6 +10,11 @@ variable "ami_id" {
   description = "AMI containing Node Sample App"
 }
 
-variable "gateway_id_var" {
-  description = "data.aws_internet_gateway.default_gw.id"
+# making our own igw
+# variable "gateway_id_var" {
+#   description = "data.aws_internet_gateway.default_gw.id"
+# }
+
+variable "igw" {
+  description = "igw from main main"
 }

@@ -1,10 +1,67 @@
 # App tier
 ### All things to do with the App EC2 creation
 
+
+# Public NACL
+resource "aws_network_acl" "nacl_public" {
+  vpc_id  = var.vpc_id
+
+  ingress {
+    protocol        = "tcp"
+    rule_no         = 100
+    action          = "allow"
+    cidr_block      = "0.0.0.0/0"
+    from_port       = 80
+    to_port         = 80
+  }
+  ingress {
+    protocol        = "tcp"
+    rule_no         = 110
+    action          = "allow"
+    cidr_block      = "0.0.0.0/0"
+    from_port       = 3000
+    to_port         = 3000
+  }
+  ingress {
+    protocol        = "tcp"
+    rule_no         = 120
+    action          = "allow"
+    cidr_block      = "0.0.0.0/0"
+    from_port       = 443
+    to_port         = 443
+  }
+  ingress {
+    protocol        = "tcp"
+    rule_no         = 130
+    action          = "allow"
+    cidr_block      = "0.0.0.0/0"
+    from_port       = 1024
+    to_port         = 65535
+  }
+  ingress {
+    protocol        = "tcp"
+    rule_no         = 140
+    action          = "allow"
+    cidr_block      = "86.174.120.138/32"
+    from_port       = 22
+    to_port         = 22
+  }
+  egress {
+    protocol        = "tcp"
+    rule_no         = 100
+    action          = "allow"
+    cidr_block      = "0.0.0.0/0"
+    from_port       = 0
+    to_port         = 0
+  }
+}
+
+
+
 # Public Subnet
 resource "aws_subnet" "app_subnet_elliot" {
   vpc_id            = var.vpc_id
-  cidr_block        = "172.31.44.0/24"
+  cidr_block        = "100.10.1.0/24"
   availability_zone = "eu-west-1a"
   tags = {
     Name = "${var.name}subnet-public"
@@ -16,7 +73,7 @@ resource "aws_route_table" "public" {
   vpc_id          = var.vpc_id
   route {
     cidr_block    = "0.0.0.0/0"
-    gateway_id    = var.gateway_id_var
+    gateway_id    = var.igw
   }
   tags = {
     Name          = "${var.name}public"
