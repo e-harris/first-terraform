@@ -54,6 +54,10 @@ resource "aws_network_acl" "nacl_public" {
     from_port       = 0
     to_port         = 0
   }
+
+  tags = {
+    Name = "Public NACL"
+  }
 }
 
 
@@ -61,10 +65,10 @@ resource "aws_network_acl" "nacl_public" {
 # Public Subnet
 resource "aws_subnet" "app_subnet_elliot" {
   vpc_id            = var.vpc_id
-  cidr_block        = "100.10.1.0/24"
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "eu-west-1a"
   tags = {
-    Name = "${var.name}subnet-public"
+    Name = "${var.name}Public-Node-Sample-App-Subnet"
   }
 }
 
@@ -76,7 +80,7 @@ resource "aws_route_table" "public" {
     gateway_id    = var.igw
   }
   tags = {
-    Name          = "${var.name}public"
+    Name          = "${var.name}Node-Sample-App-Public"
   }
 }
 
@@ -100,7 +104,7 @@ data "template_file" "app_init" {
     # AWS gives us new IPs - If we want to make one machine aware of another this could be useful
 }
 
-# Launching a resource
+# Launching a resource/instance
 resource "aws_instance" "app_instance" {
   ami                           = var.ami_id
   instance_type                 = "t2.micro"

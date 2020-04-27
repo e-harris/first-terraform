@@ -9,7 +9,7 @@ provider "aws" {
 # create a VPC
 
 resource "aws_vpc" "app_vpc" {
- cidr_block = "100.10.0.0/16"
+ cidr_block = "10.0.0.0/16"
  tags = {
    Name = "${var.name}Node-Sample-App-VPC"
  }
@@ -42,6 +42,12 @@ module "app" {
   # gateway_id_var  = data.aws_internet_gateway.default_gw.id
 }
 
+
+module "mongodb" {
+  source      = "./modules/mongodb_tier"
+  vpc_id      = aws_vpc.app_vpc.id
+  name        = var.name
+}
 
 
 # route table

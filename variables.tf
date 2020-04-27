@@ -1,5 +1,5 @@
 variable "vpc_id" {
-  default = "vpc-07e47e9d90d2076da"
+  default = "vpc-0e1bccbf05027a2d5"
 }
 
 variable "name" {
