@@ -27,14 +27,12 @@ resource "aws_subnet" "app_subnet_elliot" {
 # Route Table
 resource "aws_route_table" "public" {
   vpc_id          = var.vpc_id
-
   route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = data.aws_internet_gateway.default_gw.id
+    cidr_block    = "0.0.0.0/0"
+    gateway_id    = data.aws_internet_gateway.default_gw.id
   }
-
   tags = {
-    Name = "${var.name}public"
+    Name          = "${var.name}public"
   }
 }
 
@@ -53,6 +51,9 @@ data "aws_internet_gateway" "default_gw" {
   }
 }
 
+data "template_file" "app_init" {
+  template = file("./templates/app_init/init.sh.tpl")
+}
 
 
 
@@ -64,24 +65,27 @@ resource "aws_instance" "app_instance" {
   subnet_id                     = "${aws_subnet.app_subnet_elliot.id}"
   vpc_security_group_ids        = [aws_security_group.elliot_eng54_terraform.id]
   tags = {
-    Name = "${var.name}terraform-app"
+    Name                        = "${var.name}terraform-app"
   }
   key_name                      = "elliot-eng54"
 
+  user_data = data.template_file.app_init.rendered
 
-  provisioner "remote-exec" {
-    inline  = [
-      "cd app",
-      "npm install",
-      "npm start"
-    ]
-  }
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = file("~/.ssh/elliot-eng54.pem")
-    host        = self.public_ip
-  }
+
+# One way to get Node App running on EC2 instance, but leaves terraform hanging, see templates.
+  # provisioner "remote-exec" {
+  #   inline  = [
+  #     "cd app",
+  #     "npm install",
+  #     "npm start"
+  #   ]
+  # }
+  # connection {
+  #   type        = "ssh"
+  #   user        = "ubuntu"
+  #   private_key = file("~/.ssh/elliot-eng54.pem")
+  #   host        = self.public_ip
+  # }
 }
 
 # adding a security group
@@ -141,6 +145,8 @@ resource "aws_security_group" "elliot_eng54_terraform" {
     Name = "${var.name}app-security"
   }
 }
+
+
 
 
 # route table
