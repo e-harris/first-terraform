@@ -1,3 +1,0 @@
-source "https://supermarket.chef.io"
-
-cookbook 'node', git: "https://github.com/e-harris/NodeCookbook"
