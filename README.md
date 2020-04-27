@@ -15,6 +15,10 @@ An AMI is a blue print (snapshot) of an instance:
 
 This terraform uses an AMI that contains the Sparta Node Sample App.
 
+We have used modules to improve our separation of concerns.
+
+A separate module for the App has been used along with the Database having its own module.
+
 
 **To create the AMI:**
 
