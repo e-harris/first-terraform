@@ -106,10 +106,10 @@ data "template_file" "app_init" {
 
 # Launching a resource/instance
 resource "aws_instance" "app_instance" {
-  ami                           = var.ami_id
+  ami                           = var.app_ami_id
   instance_type                 = "t2.micro"
   associate_public_ip_address   = true
-  subnet_id                     = "${aws_subnet.app_subnet_elliot.id}"
+  subnet_id                     = aws_subnet.app_subnet_elliot.id
   vpc_security_group_ids        = [aws_security_group.elliot_eng54_terraform.id]
   tags = {
     Name                        = "${var.name}terraform-app"

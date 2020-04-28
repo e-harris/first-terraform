@@ -38,15 +38,16 @@ module "app" {
   vpc_id      = aws_vpc.app_vpc.id
   name        = var.name
   igw         = aws_internet_gateway.igw.id
-  ami_id      = var.ami_id
+  app_ami_id  = var.app_ami_id
   # gateway_id_var  = data.aws_internet_gateway.default_gw.id
 }
 
 
 module "mongodb" {
-  source      = "./modules/mongodb_tier"
-  vpc_id      = aws_vpc.app_vpc.id
-  name        = var.name
+  source          = "./modules/mongodb_tier"
+  vpc_id          = aws_vpc.app_vpc.id
+  name            = var.name
+  mongodb_ami_id  = var.mongodb_ami_id
 }
 
 

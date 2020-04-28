@@ -6,7 +6,7 @@ variable "name" {
   description = "Name set to 'elliot-eng54-''"
 }
 
-variable "ami_id" {
+variable "app_ami_id" {
   description = "AMI containing Node Sample App"
 }
 

@@ -99,3 +99,16 @@ resource "aws_security_group" "elliot_eng54_mongodb_security" {
     Name = "${var.name}mongodb-security"
   }
 }
+
+
+resource "aws_instance" "mongodb" {
+  ami                           = var.mongodb_ami_id
+  instance_type                 = "t2.micro"
+  associate_public_ip_address   = false
+  subnet_id                     = aws_subnet.app_subnet_private.id
+  vpc_security_group_ids        = [aws_security_group.elliot_eng54_mongodb_security.id]
+  tags = {
+    Name                        = "${var.name}terraform-mongodb"
+  }
+  key_name                      = "elliot-eng54"
+}

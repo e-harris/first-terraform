@@ -6,6 +6,10 @@ variable "name" {
   default = "elliot-eng54-"
 }
 
-variable "ami_id" {
+variable "app_ami_id" {
   default = "ami-06491feb177c61147"
+}
+
+variable "mongodb_ami_id" {
+  default =  "ami-03cda2f1a32ae7724"
 }
