@@ -18,3 +18,7 @@ variable "app_ami_id" {
 variable "igw" {
   description = "igw from main main"
 }
+
+variable "mongodb_private_IP" {
+  default = "Private IP for mongodb"
+}

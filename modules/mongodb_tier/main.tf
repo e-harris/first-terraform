@@ -29,10 +29,10 @@ resource "aws_network_acl" "nacl_private" {
   #   to_port         = 22
   # }
   egress {
-    protocol        = "tcp"
+    protocol        = "-1"
     rule_no         = 100
     action          = "allow"
-    cidr_block      = "10.0.1.0/24"
+    cidr_block      = "0.0.0.0/0"
     from_port       = 0
     to_port         = 0
   }
@@ -107,6 +107,7 @@ resource "aws_instance" "mongodb" {
   associate_public_ip_address   = false
   subnet_id                     = aws_subnet.app_subnet_private.id
   vpc_security_group_ids        = [aws_security_group.elliot_eng54_mongodb_security.id]
+#  private_ip                    = "10.0.2.44/32"
   tags = {
     Name                        = "${var.name}terraform-mongodb"
   }

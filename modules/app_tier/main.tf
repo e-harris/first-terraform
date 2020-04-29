@@ -96,7 +96,7 @@ data "template_file" "app_init" {
   #.tpl like .erb allow us to interpolate variables into static templates
     # making them dynamic
   vars = {
-    my_name = "${var.name} is the real name Elliot"
+    mongodb_private_IP = var.mongodb_private_IP
   }
 
   # set ports
@@ -178,6 +178,14 @@ resource "aws_security_group" "elliot_eng54_terraform" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["86.174.120.138/32"]
+  }
+
+  ingress {
+    description = "Allows access on emphral ports"
+    from_port   = 1024
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {

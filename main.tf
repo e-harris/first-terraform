@@ -39,6 +39,7 @@ module "app" {
   name        = var.name
   igw         = aws_internet_gateway.igw.id
   app_ami_id  = var.app_ami_id
+  mongodb_private_IP = module.mongodb.mongodb_private_IP
   # gateway_id_var  = data.aws_internet_gateway.default_gw.id
 }
 
